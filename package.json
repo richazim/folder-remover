@@ -48,5 +48,6 @@
   "author": {
     "name": "Azim SAIBOU"
   },
-  "publisher": "SAZ"
+  "publisher": "SAZ",
+  "icon": "./images/icon.png"
 }

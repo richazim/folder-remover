@@ -7,5 +7,8 @@
 		"out": true // set this to false to include "out" folder in search results
 	},
 	// Turn off tsc task auto detection since we have the necessary tasks as npm scripts
-	"typescript.tsc.autoDetect": "off"
+  "telemetry.feedback.enabled": false,
+  "telemetry.editStats.enabled": false,
+  "dotnetAcquisitionExtension.enableTelemetry": false,
+  "rest-client.enableTelemetry": false
 }

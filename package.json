@@ -2,7 +2,7 @@
   "name": "folderremover",
   "displayName": "Folder Remover",
   "description": "Automatically remove unnecessary folders (node_modules, dist, build, ...) from past VS Code projects.",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.107.1"
   },

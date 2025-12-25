@@ -2,22 +2,26 @@ import * as vscode from "vscode";
 
 const STORAGE_KEY = "urlStore.urls";
 
-export class UrlStore {
-  private static instance: UrlStore;
-  private constructor(private readonly context: vscode.ExtensionContext) {}
+export class UrlPersistenceService {
+  private static instance: UrlPersistenceService;
+  private readonly context: vscode.ExtensionContext;
 
-  static init(context: vscode.ExtensionContext) {
-    if (!UrlStore.instance) {
-      UrlStore.instance = new UrlStore(context);
-    }
-    return UrlStore.instance;
+  private constructor(context: vscode.ExtensionContext) {
+    this.context = context;
   }
 
-  static getInstance(): UrlStore {
-    if (!UrlStore.instance) {
+  public static init(context: vscode.ExtensionContext) {
+    if (!UrlPersistenceService.instance) {
+      UrlPersistenceService.instance = new UrlPersistenceService(context);
+    }
+    return UrlPersistenceService.instance;
+  }
+
+  public static getInstance(): UrlPersistenceService {
+    if (!UrlPersistenceService.instance) {
       throw new Error("UrlStore not initialized. Call init() first.");
     }
-    return UrlStore.instance;
+    return UrlPersistenceService.instance;
   }
 
   getUrls(): vscode.Uri[] {

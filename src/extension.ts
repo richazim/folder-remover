@@ -1,49 +1,32 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { deleteFolder, getFolders } from './utils/folders';
-import { UrlStore } from './utils/UrlStore';
-
-
-async function saveNewUnnecessaryFolders(context: vscode.ExtensionContext) {
-  const folders = await getFolders();
-  const urlStore = UrlStore.init(context);
-
-  if (folders.length) {
-    await urlStore.addUrls(folders);
-    console.log("save new unnecessary folders");
-  }
-}
+import { UrlPersistenceService } from './services/UrlPersistenceService';
+import { UnnecessaryFolderService } from './services/UnnecessaryFolderService';
+import { saveNewUnnecessaryFolders } from './use-cases/saveNewUnnecessaryFolders';
+import { removeUnnecessaryOldSavedFolders } from './use-cases/removeUnnecessaryOldSavedFolders';
 
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
   
 	console.log('Folder Remover Extension activated!!!!!!!!!!!!!');
 
-  const urlStore = UrlStore.init(context);
+  removeUnnecessaryOldSavedFolders(context);
 
-  async function removeOldFolders() {
-    const folders = urlStore.getUrls();
-    if(folders.length) { 
-      console.log("old folders", folders);
-      folders.forEach(folder => {
-        urlStore.removeUrl(folder);
-        deleteFolder(folder); 
-      });
-    }
-  }
+  // Save already present unwanted files.
+  setTimeout((context) => saveNewUnnecessaryFolders(context), 3000);
 
-  try{
-    removeOldFolders();
-    setTimeout((context) => saveNewUnnecessaryFolders(context), 3000);
-  } catch {}
-
+  // Create a file system watcher that watches for all file/folder creations in the workspace
+  // The glob pattern "**" matches everything in the workspace.
+  // The arguments (ignoreChangeEvents, ignoreDeleteEvents, ignoreCreateEvents) are all set to false.
+  const watcher = vscode.workspace.createFileSystemWatcher('**', false, false, false);
+  // Subscribe to the onDidCreate event
+  watcher.onDidCreate(async (uri: vscode.Uri) => {
+    saveNewUnnecessaryFolders(context); // track and save new created unwanted folders
+  });
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
@@ -51,13 +34,11 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('folderremover.folderRemover', async (context) => {
     saveNewUnnecessaryFolders(context);
 	});
-
 	context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated
 export async function deactivate() {
-
   
 }
 

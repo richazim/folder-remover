@@ -1,8 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { UrlPersistenceService } from './services/UrlPersistenceService';
-import { UnnecessaryFolderService } from './services/UnnecessaryFolderService';
 import { saveNewUnnecessaryFolders } from './use-cases/saveNewUnnecessaryFolders';
 import { removeUnnecessaryOldSavedFolders } from './use-cases/removeUnnecessaryOldSavedFolders';
 
@@ -34,7 +32,11 @@ export function activate(context: vscode.ExtensionContext) {
 	const disposable = vscode.commands.registerCommand('folderremover.folderRemover', async (context) => {
     saveNewUnnecessaryFolders(context);
 	});
+
+
 	context.subscriptions.push(disposable);
+  // to dispose of the file creation watcher when the extension is deactivated
+  context.subscriptions.push(watcher);
 }
 
 // This method is called when your extension is deactivated

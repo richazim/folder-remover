@@ -1,6 +1,6 @@
 {
   "name": "folderremover",
-  "displayName": "Folder Remover",
+  "displayName": "Auto Folder Remover",
   "description": "Automatically remove unnecessary folders (node_modules, dist, build, ...) from past VS Code projects.",
   "version": "1.0.0",
   "engines": {
@@ -17,7 +17,11 @@
     "commands": [
       {
         "command": "folderremover.folderRemover",
-        "title": "Folder Remover: Run Folder Remover"
+        "title": "Auto Folder Remover: Automatically track unnecessary folders"
+      },
+      {
+        "command": "folderremover.unnecessaryFolder",
+        "title": "Auto Folder Remover: Modify the list of unnecessary folders to track"
       }
     ]
   },

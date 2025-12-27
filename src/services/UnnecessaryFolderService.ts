@@ -44,9 +44,13 @@ export class UnnecessaryFolderService {
    * @param uri The uri of the folder to be deleted.
    */
   public async removeFolder(uri: vscode.Uri): Promise<void> {
-    await vscode.workspace.fs.delete(uri, {
-      recursive: true,
-      useTrash: true,
-    });
+    try{
+      await vscode.workspace.fs.delete(uri, {
+        recursive: true,
+        useTrash: true,
+      });
+    }catch(error) {
+      console.error(error);
+    }
   }
 }

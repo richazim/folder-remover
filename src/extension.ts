@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { saveNewUnnecessaryFolders } from './use-cases/saveNewUnnecessaryFolders';
 import { removeUnnecessaryOldSavedFolders } from './use-cases/removeUnnecessaryOldSavedFolders';
+import fs from "fs/promises";
 
 
 // This method is called when your extension is activated
@@ -10,7 +11,7 @@ import { removeUnnecessaryOldSavedFolders } from './use-cases/removeUnnecessaryO
 
 export function activate(context: vscode.ExtensionContext) {
   
-	console.log('Folder Remover Extension activated!!!!!!!!!!!!!');
+  vscode.window.showInformationMessage('Auto Folder Remover: Extension activated!!!!!!!!!!!!!');
 
   removeUnnecessaryOldSavedFolders(context);
 
@@ -41,6 +42,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated
 export async function deactivate() {
-  
+  // await fs.rm("/Users/azimsaibou/Desktop/test_project/node_modules", {
+  //   recursive: true,
+  //   force: true,
+  // });
 }
 

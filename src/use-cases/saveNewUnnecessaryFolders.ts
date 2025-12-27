@@ -10,6 +10,5 @@ export async function saveNewUnnecessaryFolders(context: vscode.ExtensionContext
 
   if (folders.length) {
     await urlPersistenceService.addUrls(folders);
-    console.log("New unnecessary folders saved");
   }
 }

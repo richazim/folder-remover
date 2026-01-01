@@ -1,31 +1,31 @@
 import * as vscode from "vscode";
 
-const STORAGE_KEY = "urlStore.urls";
+export const STORAGE_KEY = "urlStore.urls";
 
 export class UrlPersistenceService {
   private static instance: UrlPersistenceService;
-  private readonly context: vscode.ExtensionContext;
+  private context: vscode.ExtensionContext;
 
   private constructor(context: vscode.ExtensionContext) {
     this.context = context;
   }
 
-  public static init(context: vscode.ExtensionContext) {
+  public static getInstance(context: vscode.ExtensionContext): UrlPersistenceService {
     if (!UrlPersistenceService.instance) {
       UrlPersistenceService.instance = new UrlPersistenceService(context);
     }
     return UrlPersistenceService.instance;
   }
 
-  public static getInstance(): UrlPersistenceService {
-    if (!UrlPersistenceService.instance) {
-      throw new Error("UrlStore not initialized. Call init() first.");
-    }
-    return UrlPersistenceService.instance;
-  }
+  getUrlsAsFullpaths(): string[] {
+    const urls = this.getUrls();
 
-  getUrls(): vscode.Uri[] {
-    return this.context.globalState.get<vscode.Uri[]>(STORAGE_KEY, []);
+    const fullPaths = urls.map((name) => {
+        const folderUri = name.path;
+        return folderUri;
+    });
+
+    return fullPaths;
   }
 
   async addUrl(url: vscode.Uri): Promise<void> {
@@ -37,6 +37,10 @@ export class UrlPersistenceService {
 
     urls.push(url);
     await this.context.globalState.update(STORAGE_KEY, urls);
+  }
+
+  getUrls(): vscode.Uri[] {
+    return this.context.globalState.get<vscode.Uri[]>(STORAGE_KEY, []);
   }
 
   async addUrls(urls: vscode.Uri[]): Promise<void> {

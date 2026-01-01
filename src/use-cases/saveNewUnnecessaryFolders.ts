@@ -3,8 +3,8 @@ import { UnnecessaryFolderService } from '../services/UnnecessaryFolderService';
 import { UrlPersistenceService } from '../services/UrlPersistenceService';
 
 export async function saveNewUnnecessaryFolders(context: vscode.ExtensionContext) {
-  const urlPersistenceService = UrlPersistenceService.init(context);
-  const unnecessaryFolderService = UnnecessaryFolderService.getInstance(context);
+  const urlPersistenceService = UrlPersistenceService.getInstance(context);
+  const unnecessaryFolderService = await UnnecessaryFolderService.getInstance(context);
 
   const folders = await unnecessaryFolderService.findUnnecessaryFolders();
 

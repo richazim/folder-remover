@@ -2,7 +2,7 @@
   "name": "folderremover",
   "displayName": "Auto Folder Remover",
   "description": "Automatically remove unnecessary folders (node_modules, dist, build, ...) from past VS Code projects.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.107.1"
   },
@@ -16,12 +16,20 @@
   "contributes": {
     "commands": [
       {
-        "command": "folderremover.folderRemover",
-        "title": "Auto Folder Remover: Automatically track unnecessary folders"
+        "command": "folderremover.scan",
+        "title": "Auto Folder Remover: Scan unnecessary folders"
       },
       {
-        "command": "folderremover.unnecessaryFolder",
-        "title": "Auto Folder Remover: Modify the list of unnecessary folders to track"
+        "command": "folderremover.removeNow",
+        "title": "Auto Folder Remover: Remove unnecessary folders right now"
+      },
+      {
+        "command": "folderremover.configureExcludedFolders",
+        "title": "Auto Folder Remover: Add/Modify/Remove folder names to track"
+      },
+      {
+        "command": "folderremover.author",
+        "title": "Auto Folder Remover: Author information"
       }
     ]
   },
@@ -34,14 +42,14 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.107.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "typescript-eslint": "^8.48.1",
+    "@types/vscode": "^1.107.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "eslint": "^9.39.1",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.48.1"
   },
   "repository": {
     "type": "git",
@@ -53,5 +61,9 @@
     "name": "Azim SAIBOU"
   },
   "publisher": "SAZ",
-  "icon": "./images/icon.png"
+  "icon": "./images/icon.png",
+  "dependencies": {
+    "pretty-error": "^4.0.0"
+  },
+  "keywords": []
 }

@@ -1,7 +1,7 @@
 {
   "name": "folderremover",
   "displayName": "Auto Folder Remover",
-  "description": "Automatically remove unnecessary folders (node_modules, dist, build, ...) from past VS Code projects.",
+  "description": "Automatically remove unnecessary folders (node_modules, dist, build, ...) from VS Code projects after vscode is closed.",
   "version": "1.0.1",
   "engines": {
     "vscode": "^1.107.1"
@@ -65,5 +65,5 @@
   "dependencies": {
     "pretty-error": "^4.0.0"
   },
-  "keywords": []
+  "keywords": ["remove", "clean", "package", "node_modules", "dist", ".next", "build", "folder"]
 }

@@ -1,6 +1,6 @@
 # Folder Remover
 
-This extension helps you automatically clean your workspaces by removing old unnecessary folders such as node_modules, dist, build, and similar directories.
+This extension helps you automatically clean your workspaces by removing unnecessary folders such as node_modules, dist, build, and similar directories as soon as vscode is closed.
 
 It is designed to keep your laptop storage disk light by removing unnecessary folders after vscode is closed.
 
@@ -35,20 +35,6 @@ This extension contributes the following settings:
 
 Calling out known issues can help limit users opening duplicate issues against your extension. -->
 
-## Release Notes
-
-### 1.0.0
-
-Initial release of "Folder Remover".
-
-<!-- ### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z. -->
-<!-- 
 ---
 
 ## Following extension guidelines

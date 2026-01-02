@@ -50,7 +50,7 @@ export class UrlPersistenceService {
   }
 
   async removeUrl(url: vscode.Uri): Promise<void> {
-    const urls = this.getUrls().filter(u => u !== url);
+    const urls = this.getUrls().filter(u => u.path !== url.path);
     await this.context.globalState.update(STORAGE_KEY, urls);
   }
 

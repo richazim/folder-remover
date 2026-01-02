@@ -33,8 +33,18 @@ export function activate(context: vscode.ExtensionContext) {
   const watcher = vscode.workspace.createFileSystemWatcher('**', false, false, false);
   // Subscribe to the onDidCreate event
   watcher.onDidCreate(async (uri: vscode.Uri) => {
-    saveNewUnnecessaryFolders(context); // track and save new created unwanted folders
-    globalContext = context;
+    let drapeau = false;
+    ["node_modules", "dist", ".next"].forEach(excludedFolderName => {
+      if(uri.path.includes(excludedFolderName)){
+        drapeau = true;
+      }
+    });
+    if(drapeau) {
+      setTimeout(() => {
+        saveNewUnnecessaryFolders(context);
+        globalContext = context;
+      }, 1000);
+    }
   });
 
   const scanCmd = vscode.commands.registerCommand("folderremover.scan", async () => {

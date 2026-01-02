@@ -25,7 +25,11 @@
       },
       {
         "command": "folderremover.configureExcludedFolders",
-        "title": "Auto Folder Remover: Add/Modify/Remove folder names to track"
+        "title": "Auto Folder Remover: Add/Modify folder names to track"
+      },
+      {
+        "command": "folderremover.untrack",
+        "title": "Auto Folder Remover: Untrack uri already tracked by the extension"
       },
       {
         "command": "folderremover.author",

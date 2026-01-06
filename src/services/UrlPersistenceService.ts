@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { prettyPrintError } from "../utils/prettyPrintError";
 
 export const STORAGE_KEY = "urlStore.urls";
 
@@ -36,25 +37,51 @@ export class UrlPersistenceService {
     };
 
     urls.push(url);
+
+    this.clearStore();
+
     await this.context.globalState.update(STORAGE_KEY, urls);
   }
 
   getUrls(): vscode.Uri[] {
-    return this.context.globalState.get<vscode.Uri[]>(STORAGE_KEY, []);
+    return this.context.globalState.get<vscode.Uri[]>(STORAGE_KEY) || [];
   }
 
-  async addUrls(urls: vscode.Uri[]): Promise<void> {
-    const existingUrls = this.getUrls();
-    const newUrls = urls.filter(url => !existingUrls.includes(url));
-    await this.context.globalState.update(STORAGE_KEY, [...existingUrls, ...newUrls]);
+  async changePersistedUris(urisToPersist: vscode.Uri[]): Promise<void> {
+    const persistedUrisAsPaths = this.getUrlsAsFullpaths();
+    const persistedUris = this.getUrls();
+
+    // const newUrls = urls.filter((url) => !existingUrls.includes(url.path));
+    let newUrisToPersist: vscode.Uri[] = [];
+    urisToPersist.forEach((newUriToPersist) => {
+      if(!persistedUrisAsPaths.includes(newUriToPersist.path)){
+        newUrisToPersist.push(newUriToPersist);
+      }
+    });
+
+    this.clearStore();
+
+    await this.context.globalState.update(STORAGE_KEY, [...persistedUris, ...newUrisToPersist]);
   }
 
   async removeUrl(url: vscode.Uri): Promise<void> {
-    const urls = this.getUrls().filter(u => u.path !== url.path);
-    await this.context.globalState.update(STORAGE_KEY, urls);
+    const actualPersistedUrls = this.getUrls() || [];
+    if(actualPersistedUrls.length === 0) {
+      return;
+    }
+    
+    try{
+      const filtred = actualPersistedUrls.filter((persistedUrl) => persistedUrl.path !== url.path); 
+
+      this.clearStore();
+      
+      await this.context.globalState.update(STORAGE_KEY, filtred);
+    }catch(error) {
+      prettyPrintError(error);
+    }
   }
 
-  async clear(): Promise<void> {
+  async clearStore(): Promise<void> {
     await this.context.globalState.update(STORAGE_KEY, []);
   }
 }

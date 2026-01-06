@@ -1,19 +1,15 @@
 import * as vscode from 'vscode';
 import { readJsonFromUri } from '../utils/readJsonFromUri';
-
-export const configJsonUri = vscode.Uri.joinPath(
-  vscode.workspace.workspaceFolders![0].uri,
-  "config.json"
-);
+import { prettyPrintError } from '../utils/prettyPrintError';
+import { fileExists } from '../utils/fileExist';
+import { UrlPersistenceService } from './UrlPersistenceService';
 
 export class UnnecessaryFolderService {
   private static unnecessaryFolderServiceInstance: UnnecessaryFolderService;
   private readonly context: vscode.ExtensionContext;
-  private excludedFolderNames: string[];
 
-  private constructor(context: vscode.ExtensionContext, excludedFolderNames: string[] = ["node_modules", "dist", ".next"]) {
+  private constructor(context: vscode.ExtensionContext) {
     this.context = context;
-    this.excludedFolderNames = excludedFolderNames;
   }
 
   /**
@@ -25,19 +21,23 @@ export class UnnecessaryFolderService {
    */
   public static async getInstance(context: vscode.ExtensionContext): Promise<UnnecessaryFolderService> {
     if(!UnnecessaryFolderService.unnecessaryFolderServiceInstance) {
-      const t = await readJsonFromUri<{excludedFolders: string[]}>(configJsonUri);
-      const excludedFolderNames = t?.excludedFolders;
-      UnnecessaryFolderService.unnecessaryFolderServiceInstance = new UnnecessaryFolderService(context, excludedFolderNames);
+      // const t = await readJsonFromUri<{excludedFolders: string[]}>(configJsonUri);
+      // const excludedFolderNames = t?.excludedFolders;
+      UnnecessaryFolderService.unnecessaryFolderServiceInstance = new UnnecessaryFolderService(context);
     }
     return UnnecessaryFolderService.unnecessaryFolderServiceInstance;
   }
 
-  public async findUnnecessaryFolders(): Promise<vscode.Uri[]> {
+  public async findUnnecessaryFolders(foldersToTrack: string[]): Promise<vscode.Uri[]> {
     const actualWorkspaceUri = vscode.workspace.workspaceFolders![0].uri;
+
     const allEntries = await vscode.workspace.fs.readDirectory(actualWorkspaceUri);
+
     const unnecessaryFolders = allEntries.filter(([name, type]) => {
-      return this.excludedFolderNames.includes(name) && type === vscode.FileType.Directory;
+      return foldersToTrack.includes(name) && 
+              type === vscode.FileType.Directory;
     });
+
     return unnecessaryFolders.map(([name]) => {
       const folderUri = vscode.Uri.joinPath(vscode.workspace.workspaceFolders![0].uri, name);
       return folderUri;
@@ -54,17 +54,14 @@ export class UnnecessaryFolderService {
    */
   public async removeFolder(uri: vscode.Uri): Promise<void> {
     try{
-      const folderUri = uri.path;
-      await vscode.workspace.fs.delete(uri, {
-        recursive: true,
-        useTrash: true,
-      });
-      vscode.window.showInformationMessage(`
-        Auto Folder Remover: 
-        The folder ${folderUri} has been removed successfully.
-      `);
+      if(await fileExists(uri)) {
+        await vscode.workspace.fs.delete(uri, {
+          recursive: true,
+          useTrash: true,
+        });
+      }
     }catch(error) {
-      console.error(error);
+      prettyPrintError(error);
     }
   }
 }

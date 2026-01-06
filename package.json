@@ -2,7 +2,7 @@
   "name": "folderremover",
   "displayName": "Auto Folder Remover",
   "description": "Automatically remove unnecessary folders (node_modules, dist, build, ...) from VS Code projects after vscode is closed.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "engines": {
     "vscode": "^1.107.1"
   },
@@ -16,26 +16,40 @@
   "contributes": {
     "commands": [
       {
-        "command": "folderremover.scan",
-        "title": "Auto Folder Remover: Scan unnecessary folders"
+        "command": "folderremover.trackUntracked",
+        "title": "Auto Folder Remover: Track untracked folder uri(s)"
       },
       {
-        "command": "folderremover.removeNow",
+        "command": "folderremover.removeAllTrackedFolders",
         "title": "Auto Folder Remover: Remove unnecessary folders right now"
       },
       {
-        "command": "folderremover.configureExcludedFolders",
-        "title": "Auto Folder Remover: Add/Modify folder names to track"
+        "command": "folderremover.configureFolderToTrack",
+        "title": "Auto Folder Remover: Configure Folder(s) to track"
       },
       {
-        "command": "folderremover.untrack",
-        "title": "Auto Folder Remover: Untrack uri already tracked by the extension"
+        "command": "folderremover.trackedList",
+        "title": "Auto Folder Remover: List all the tracked folder uri"
+      },
+      {
+        "command": "folderremover.untrackAll",
+        "title": "Auto Folder Remover: Clean all the tracked folder uris"
       },
       {
         "command": "folderremover.author",
         "title": "Auto Folder Remover: Author information"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Auto Folder Remover",
+      "properties": {
+        "folderremover.foldersToTrack": {
+          "type": "array",
+          "default": ["node_modules", "dist", ".next"],
+          "description": "List of folder(s) to track and auto delete after"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

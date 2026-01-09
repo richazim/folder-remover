@@ -4,6 +4,16 @@ This extension helps you automatically clean your workspaces by removing unneces
 
 It is designed to keep your laptop storage disk light by removing unnecessary folders after vscode is closed.
 
+## Usage
+
+### Installation
+
+![How to install](./usage/installation.gif)
+
+### How it work
+
+!["How it work"](./usage/how_it_work.gif)
+
 ## Contributing & Issues
 
 - Report bugs by opening an [Issue](https://github.com/richazim/folder-remover/issues)

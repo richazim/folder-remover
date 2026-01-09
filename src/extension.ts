@@ -1,8 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { saveNewUnnecessaryFolders } from "./use-cases/saveNewUnnecessaryFolders";
-import { removeUnnecessaryOldPersistedFolders } from "./use-cases/removeUnnecessaryOldPersistedFolders";
+import { saveNewUnnecessaryFolders } from "./actions/saveNewUnnecessaryFolders";
+import { removeUnnecessaryOldPersistedFolders } from "./actions/removeUnnecessaryOldPersistedFolders";
 import fs from "fs/promises";
 import {
   UnnecessaryFolderService,

@@ -6,10 +6,8 @@ import { UrlPersistenceService } from './UrlPersistenceService';
 
 export class UnnecessaryFolderService {
   private static unnecessaryFolderServiceInstance: UnnecessaryFolderService;
-  private readonly context: vscode.ExtensionContext;
 
-  private constructor(context: vscode.ExtensionContext) {
-    this.context = context;
+  private constructor() {
   }
 
   /**
@@ -23,7 +21,7 @@ export class UnnecessaryFolderService {
     if(!UnnecessaryFolderService.unnecessaryFolderServiceInstance) {
       // const t = await readJsonFromUri<{excludedFolders: string[]}>(configJsonUri);
       // const excludedFolderNames = t?.excludedFolders;
-      UnnecessaryFolderService.unnecessaryFolderServiceInstance = new UnnecessaryFolderService(context);
+      UnnecessaryFolderService.unnecessaryFolderServiceInstance = new UnnecessaryFolderService();
     }
     return UnnecessaryFolderService.unnecessaryFolderServiceInstance;
   }
@@ -52,16 +50,16 @@ export class UnnecessaryFolderService {
    * deleted files will be moved to the system's trash can.
    * @param uri The uri of the folder to be deleted.
    */
-  public async removeFolder(uri: vscode.Uri): Promise<void> {
-    try{
-      if(await fileExists(uri)) {
-        await vscode.workspace.fs.delete(uri, {
-          recursive: true,
-          useTrash: true,
-        });
-      }
-    }catch(error) {
-      prettyPrintError(error);
-    }
-  }
+  // public async removeFolder(uri: vscode.Uri): Promise<void> {
+  //   try{
+  //     if(await fileExists(uri)) {
+  //       await vscode.workspace.fs.delete(uri, {
+  //         recursive: true,
+  //         useTrash: true,
+  //       });
+  //     }
+  //   }catch(error) {
+  //     prettyPrintError(error);
+  //   }
+  // }
 }

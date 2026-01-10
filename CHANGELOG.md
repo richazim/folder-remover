@@ -14,5 +14,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 1.0.4:
   - Fix bug occuring when creating a folder in the vscode workspace project.
   - The extension start whenever VS Code starts up.
-- 1.1.0:
+- 1.0.6:
   - Stable version.
+- 1.0.7:
+  - Fix: The extension can now force the deletion of a folder and retry 3 tree time if failed.

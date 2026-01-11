@@ -9,14 +9,14 @@ It is designed to keep your laptop storage disk light by removing unnecessary fo
 ### Installation
 
 <video width="320" height="240" controls>
-  <source src="https://mega.nz/embed/6tBzABRZ#vFvDy9F4FBjpOqzEa4oiS3YJwBP12WVp4hdY7FBLX24" type="video/mp4">
+  <source src="https://github.com/user-attachments/assets/e0059ed7-949e-4a8b-8028-31297d282f28" type="video/mp4">
   Votre navigateur ne supporte pas la balise vidéo.
 </video>
 
 ### How it work
 
 <video width="320" height="240" controls>
-  <source src="https://mega.nz/embed/39wXnSJZ#5SDqaKTULrzM7s8FCpleOYfr8b97kkMMJljQQM3QAzA" type="video/mp4">
+  <source src="https://github.com/user-attachments/assets/e0059ed7-949e-4a8b-8028-31297d282f28" type="video/mp4">
   Votre navigateur ne supporte pas la balise vidéo.
 </video>
 

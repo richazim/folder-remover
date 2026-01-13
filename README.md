@@ -6,9 +6,8 @@ It is designed to keep your laptop storage disk light by removing unnecessary fo
 
 ## Usage
 
-### Installation
+<video src="https://github.com/user-attachments/assets/b3ccb2d2-9a66-414d-ba67-e606ab271c37" alt='vid1'></video>
 
-### How it work
 <video src="https://github.com/user-attachments/assets/e0059ed7-949e-4a8b-8028-31297d282f28"></video>
 
 ## Contributing & Issues

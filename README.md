@@ -8,7 +8,7 @@ It is designed to keep your laptop storage disk light by removing unnecessary fo
 
 <video src="https://github.com/user-attachments/assets/b3ccb2d2-9a66-414d-ba67-e606ab271c37" alt='vid1'></video>
 
-<video src="https://github.com/user-attachments/assets/e0059ed7-949e-4a8b-8028-31297d282f28"></video>
+<video src="https://github.com/user-attachments/assets/15f6144a-9299-48f8-a138-e430b3f8a313"></video>
 
 ## Contributing & Issues
 

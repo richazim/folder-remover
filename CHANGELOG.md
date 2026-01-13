@@ -19,3 +19,5 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 1.0.7:
   - Fix: The extension can now force the deletion of a folder and retry 3 tree time if failed.
 - 1.0.8
+- 1.0.9:
+  - Fixed readme video links

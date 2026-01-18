@@ -9,9 +9,13 @@ export async function removeUnnecessaryOldPersistedFolders(context: vscode.Exten
   
   const folders = urlPersistenceService.getUrls();
   if(folders.length) { 
-    folders.forEach(folder => {
-      urlPersistenceService.removeUrl(folder);
-      removeFolder(folder);
+    // Traitement parallèle
+    const promesses = folders.map(async (uri) => {
+      const isRemoved = await removeFolder(uri);
+      if(isRemoved) {
+        urlPersistenceService.removeUrl(uri);
+      }
     });
+    await Promise.all(promesses);
   }
 }

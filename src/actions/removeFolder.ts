@@ -5,7 +5,7 @@ import { VscodeDeletionService } from '../services/VscodeDeletionService';
 
 export async function removeFolder(
   uri: vscode.Uri
-): Promise<void> {
+): Promise<boolean> {
   const vsService = new VscodeDeletionService();
   const shellService = new ShellDeletionService();
 
@@ -13,23 +13,12 @@ export async function removeFolder(
   await vscode.commands.executeCommand('typescript.restartTsServer');
 
   // 2️⃣ Tentative propre via VS Code FS
-  try {
-    await vsService.deleteFolder(uri);
+  const isDeleted = await vsService.deleteFolder(uri);
 
-    if (!(await vsService.exists(uri))) {
-      return;
-    }
-  } catch {
-    // ignore → fallback
+  if(isDeleted) {
+    return true;
   }
 
   // 3️⃣ Fallback shell (dernier recours)
-  try {
-    await shellService.deleteFolder(uri);
-  } catch (err) {
-    vscode.window.showErrorMessage(
-      'Impossible de supprimer node_modules'
-    );
-    console.error(err);
-  }
+  return await shellService.deleteFolder(uri);
 }

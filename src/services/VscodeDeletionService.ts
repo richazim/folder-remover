@@ -5,19 +5,26 @@ import { FolderDeletion } from '../interfaces/FolderDeletion';
 
 export class VscodeDeletionService implements FolderDeletion {
   public async deleteFolder(uri: vscode.Uri): Promise<boolean> {
-    await retry(async () => {
-      await vscode.workspace.fs.delete(uri, {
+    // await retry(async () => {
+    //   await vscode.workspace.fs.delete(uri, {
+    //     recursive: true,
+    //     useTrash: false, // CRUCIAL
+    //   });
+    // }, 1, 500);
+
+    await vscode.workspace.fs.delete(uri, {
         recursive: true,
         useTrash: false, // CRUCIAL
-      });
-    }, 3, 500);
+    });
 
     const exists = await this.exists(uri);
 
+    // I want to force deletion by anyway. 
+    // deleteFolder must always returns true.
     if (exists) {
-      return true;
+      return this.deleteFolder(uri);
     }
-    return false;
+    return true;
   }
 
   public async exists(uri: vscode.Uri): Promise<boolean> {

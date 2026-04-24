@@ -2,6 +2,7 @@
 import * as vscode from 'vscode';
 import { ShellDeletionService } from '../services/ShellDeletionService';
 import { VscodeDeletionService } from '../services/VscodeDeletionService';
+import { prettyPrintError } from '../utils/prettyPrintError';
 
 export async function removeFolder(
   uri: vscode.Uri
@@ -9,16 +10,21 @@ export async function removeFolder(
   const vsService = new VscodeDeletionService();
   const shellService = new ShellDeletionService();
 
-  // 1️⃣ Stop TS Server (libère des locks)
+  // Stop TS Server (libère des locks)
   await vscode.commands.executeCommand('typescript.restartTsServer');
 
-  // 2️⃣ Tentative propre via VS Code FS
-  const isDeleted = await vsService.deleteFolder(uri);
+  // Tentative propre via VS Code FS
+  // const isDeleted = await vsService.deleteFolder(uri);
 
-  if(isDeleted) {
-    return true;
+  // if(isDeleted) {
+  //   return true;
+  // }
+  try{
+    return await vsService.deleteFolder(uri);
+  }catch(e) {
+    prettyPrintError(e);
   }
 
-  // 3️⃣ Fallback shell (dernier recours)
+  // Fallback shell (dernier recours)
   return await shellService.deleteFolder(uri);
 }

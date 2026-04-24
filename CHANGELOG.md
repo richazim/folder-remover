@@ -22,5 +22,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 1.0.9:
   - Fixed readme video links
 - 1.1.0:
-  - Changelog: The extension can now conserve the unwanted uri if it is not deleted when vscode started
-  
+  - Changelog: The extension can now conserve the unwanted uri if it is not deleted when vscode started.
+- 1.2.0:
+  The extension can now consider the opened instances of vscode. The activation of the extension will never try to remove the node_modules of the opened instances.

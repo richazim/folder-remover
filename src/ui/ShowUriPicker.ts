@@ -23,14 +23,10 @@ export async function showUriPicker(uris: vscode.Uri[], context: vscode.Extensio
     return;
   }
 
-  console.log("selected.....", selected, uris);
-
   // const selectedUris = uris.filter(
   //   (u, i) => (selected[i]) ? u.path === selected[i].description : false
   // );
   const selectedUris = selected.map((selectedItem) => vscode.Uri.parse(selectedItem.description as string));
-
-  console.log("selectedUris.....", selectedUris);
 
   if (selectedUris.length > 0) {
     // await vscode.window.showTextDocument(uri);

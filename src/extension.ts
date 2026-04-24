@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { saveNewUnnecessaryFolders } from "./actions/saveNewUnnecessaryFolders";
-import { removeUnnecessaryOldPersistedFolders } from "./actions/removeUnnecessaryOldPersistedFolders";
+import { removeAllExcludingUrisFromOpenedProjects, removeUnnecessaryOldPersistedFolders } from "./actions/removeUnnecessaryOldPersistedFolders";
 import fs from "fs/promises";
 import {
   UnnecessaryFolderService,
@@ -13,22 +13,51 @@ import {
 } from "./services/UrlPersistenceService";
 import { showUriPicker } from "./ui/ShowUriPicker";
 import { FolderRemoverConfig } from "./config/folderRemover.config";
+import { OpenedProjectUriService } from "./services/opened-project-uri.service";
+import { OpenedProjectUriStorage } from "./storage/opened-project-uri.storage";
+import { cleanOpenedProjectUris } from "./actions/cleanOpenedProjectUris";
+import { prettyPrintError } from "./utils/prettyPrintError";
+import { open } from "fs";
+import { AppendOnlyStore } from "./storage/shared-store.storage";
 
 let globalContext: vscode.ExtensionContext | null = null; // Temporary: After, We will find another way to get uris to delete directly in deactivate func.
 
+/**
+ * This variable will contain the current opened vscode project uri.
+ */
+let currentOpenedProjectUri: vscode.Uri | null = null;
+
+let openedProjectUriService: OpenedProjectUriService;
+let store: AppendOnlyStore;
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-
 export async function activate(context: vscode.ExtensionContext) {
   const urlPersistenceService = UrlPersistenceService.getInstance(context);
   const unnecessaryFolderService = await UnnecessaryFolderService.getInstance(context);
 
+  openedProjectUriService = new OpenedProjectUriService(new AppendOnlyStore(context));
+  store = new AppendOnlyStore(context);
+
   vscode.window.showInformationMessage(
-    "Auto Folder Remover: Extension activated!!!!!!!!!!!!!"
+    "Auto Folder Remover: Extension activated!"
   );
+
+  /**
+   * Clean closed vscode project from opened vscode project uris
+   */
+  cleanOpenedProjectUris(context, openedProjectUriService.getAll());
+
+  /**
+   * Opened Project Uri
+   */
+  currentOpenedProjectUri = vscode.workspace.workspaceFolders![0].uri || null;
+  openedProjectUriService.add(currentOpenedProjectUri);
+
   
-  removeUnnecessaryOldPersistedFolders(context);
-  globalContext = context;
+  // removeUnnecessaryOldPersistedFolders(context); // We use this given vscode context to be able to use the vscode persistance storer (globalState).
+  removeAllExcludingUrisFromOpenedProjects(context);
+  globalContext = context; // because the context is modified by removeUnnecessaryOldPersistedFolders but I want the new context so I can use it in deactivate method.
 
   FolderRemoverConfig.init(); // Initialize the foldersToTrack
 
@@ -130,8 +159,10 @@ export async function activate(context: vscode.ExtensionContext) {
          Auto Folder Remover:\n
          Author: Azim SAÏBOU\n
          GitHub: https://github.com/richazim\n
-         Linkedin: https://www.linkedin.com/in/azimsaibou/
+         Linkedin: https://www.linkedin.com/in/azimsaibou/\n
       `, { modal: true });
+
+      // await store.append("project://my-folder");
     }
   );
 
@@ -149,13 +180,45 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const currentOpenedProjectCmd = vscode.commands.registerCommand(
+    "folderremover.currentOpenedProjects",
+    async (context) => {
+      const uris = await openedProjectUriService.getAll();
+
+      const items: vscode.QuickPickItem[] = uris.map(uri => ({
+          label: vscode.workspace.asRelativePath(uri),
+          description: uri,
+        }));
+      
+        if(items.length > 0) {
+            await vscode.window.showQuickPick(items, {
+              placeHolder: "",
+              canPickMany: true,
+            });
+        }else{
+          vscode.window.showInformationMessage("Auto Folder Remover: No tracked unnecessary folder found in this project.");
+        }
+    }
+  );
+  
+  // écouter les changement dans le append store file.
+  store.onDidAppend((line: string) => {
+    if(line.endsWith(":deleted")){
+      console.log("Suppression prête pour:", line);
+    } else {
+      console.log("Ligne ajoutée:", line);
+    }
+  });
+
+
   context.subscriptions.push(
     scanCmd,
     removeNowCmd,
     configureExcludedFoldersCmd,
     authorCmd,
     untrackAllCmd,
-    untrackCmd
+    untrackCmd,
+    currentOpenedProjectCmd
   );
 
   // to dispose of the file creation watcher when the extension is deactivated
@@ -164,21 +227,31 @@ export async function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated
 export async function deactivate() {
-  if (globalContext) {
-    let unnecessaryUris: string[] = [];
-    let uris: vscode.Uri[] = globalContext.globalState.get(STORAGE_KEY) || [];
+  if (!globalContext || !currentOpenedProjectUri) return;
 
-    uris.forEach((element: vscode.Uri) => {
-      if (!unnecessaryUris.includes(element.path)) {
-        unnecessaryUris.push(element.path);
-      }
-    });
+  if (openedProjectUriService) {
+    openedProjectUriService.remove(currentOpenedProjectUri.path);
+  }
 
-    for (let i = 0; i < unnecessaryUris.length; i++) {
-      await fs.rm(unnecessaryUris[i], {
+  const uris: vscode.Uri[] =
+    globalContext.globalState.get(STORAGE_KEY) || [];
+
+  // Filtrer directement les dossiers à supprimer
+  const unnecessaryUris = uris.filter((uri) =>
+    uri.path.startsWith(currentOpenedProjectUri!.path)
+  );
+
+  // Suppression robuste séquentielle (évite les conflits système)
+  for (const uri of unnecessaryUris) {
+    try {
+      await fs.rm(uri.path, {
         recursive: true,
         force: true,
+        maxRetries: 10,
+        retryDelay: 100,
       });
+    } catch (error) {
+      prettyPrintError(error);
     }
   }
 }

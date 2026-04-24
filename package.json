@@ -2,7 +2,7 @@
   "name": "folderremover",
   "displayName": "Auto Folder Remover",
   "description": "Automatically remove unnecessary folders (node_modules, dist, build, ...) from VS Code projects after vscode is closed.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "engines": {
     "vscode": "^1.107.1"
   },
@@ -38,6 +38,10 @@
       {
         "command": "folderremover.author",
         "title": "Auto Folder Remover: Author information"
+      },
+      {
+        "command": "folderremover.currentOpenedProjects",
+        "title": "Auto Folder Remover: Show All, current opened projects uris"
       }
     ],
     "configuration": {
@@ -46,7 +50,7 @@
         "folderremover.foldersToTrack": {
           "type": "array",
           "default": ["node_modules", "dist", ".next"],
-          "description": "List of folder(s) to track and auto delete after"
+          "description": "List of folder(s) to track and auto delete each time a vscode project is closed."
         }
       }
     }

@@ -1,27 +1,33 @@
 // services/ShellDeletionService.ts
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import { FolderDeletion } from '../interfaces/FolderDeletion';
-import * as vscode from 'vscode';
-import * as fs from 'fs/promises';
+import { exec } from "child_process";
+import { promisify } from "util";
+import { FolderDeletion } from "../interfaces/FolderDeletion";
+import * as vscode from "vscode";
+import * as fs from "fs/promises";
+import { prettyPrintError } from "../utils/prettyPrintError";
 
 const execAsync = promisify(exec);
 
 export class ShellDeletionService implements FolderDeletion {
   async deleteFolder(uri: vscode.Uri): Promise<boolean> {
     const path = uri.path;
-    const command =
-      process.platform === 'win32'
-        ? `rmdir /s /q "${path}"`
-        : `rm -rf "${path}"`;
 
-    await execAsync(command);
-    
-    try{
-      return !await this.exists(uri);
-    }catch (error) {
-      return false;
+    try {
+      await fs.rm(path, { recursive: true, force: true });
+    } catch (error) {
+      prettyPrintError(error);
+      // await execAsync(
+      //   process.platform === "win32"
+      //     ? `rmdir /s /q "${path}"`
+      //     : `rm -rf "${path}"`
+      // );
+
+      /* When it fails, try to delete 
+      the path again to increase probability of complete deletion success */
+      await fs.rm(path, { recursive: true, force: true });
     }
+
+    return !await this.exists(uri);
   }
 
   async exists(uri: vscode.Uri): Promise<boolean> {
